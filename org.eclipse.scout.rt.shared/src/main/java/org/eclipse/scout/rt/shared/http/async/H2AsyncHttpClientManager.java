@@ -13,6 +13,8 @@ import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
 import org.apache.hc.client5.http.impl.async.H2AsyncClientBuilder;
 import org.apache.hc.client5.http.impl.async.HttpAsyncClients;
 import org.eclipse.scout.rt.platform.ApplicationScoped;
+import org.eclipse.scout.rt.platform.BEANS;
+import org.eclipse.scout.rt.shared.http.ApacheMultiSessionCookieStore;
 
 /**
  * <p>
@@ -36,6 +38,13 @@ public class H2AsyncHttpClientManager extends AbstractAsyncHttpClientManager<H2A
   @Override
   protected void interceptCreateClient(H2AsyncClientBuilder builder) {
     builder.useSystemProperties();
+
+    installMultiSessionCookieStore(builder);
+  }
+
+  protected void installMultiSessionCookieStore(H2AsyncClientBuilder builder) {
+    // see very similar code in org.eclipse.scout.rt.shared.http.async.DefaultAsyncHttpClientManager.installMultiSessionCookieStore(HttpAsyncClientBuilder), unfortunately there is no common interface
+    builder.setDefaultCookieStore(BEANS.get(ApacheMultiSessionCookieStore.class));
   }
 
   @Override
